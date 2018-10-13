@@ -1,0 +1,10 @@
+# Ignore pycache
+__pycache__
+
+# Remove build files
+build/
+dist/
+*.egg-info/
+
+# Ignore vim swap files
+*.swp
