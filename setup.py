@@ -4,11 +4,13 @@ from setuptools import setup
 
 setup(
 	name = 'docker-registry-statistics',
-	version = '0.0.1',
+	version = '0.0.2',
 	description = 'A useful module',
+	long_description = open('README.md').read(),
 	author = 'Peter Babics',
 	author_email = 'peter.ntx@gmail.com',
-	license = 'GNU GPLv3',
+	url='https://github.com/pbabics/docker-registry-statistics/',
+	keywords = 'docker registry gitlab statistics',
 	packages = [
 		'docker_registry_statistics',
 		'docker_registry_statistics.commands'
@@ -21,5 +23,18 @@ setup(
 		'console_scripts': [
 			'docker-registry-statistics = docker_registry_statistics.__main__:cli'
 		]
+	},
+	classifiers = [
+		'Development Status :: 3 - Alpha',
+		'Intended Audience :: Developers',
+		'Topic :: System :: Monitoring',
+		'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+		'Programming Language :: Python :: 3',
+		'Programming Language :: Python :: 3.6',
+		'Programming Language :: Python :: 3.7',
+	],
+	project_urls={
+		'Bug Reports': 'https://github.com/pbabics/docker-registry-statistics/issues',
+		'Source': 'https://github.com/pbabics/docker-registry-statistics/',
 	}
 )
