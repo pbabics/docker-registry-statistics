@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
 	name = 'docker-registry-statistics',
 	version = '0.0.3',
-	description = 'A useful module',
+	description = 'Tool which will calculates disk usage statistics of docker registry',
 	long_description = open('README.md').read(),
 	long_description_content_type = 'text/markdown',
 	author = 'Peter Babics',
