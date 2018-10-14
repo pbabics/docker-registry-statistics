@@ -7,10 +7,11 @@ import click
 
 import docker_registry_statistics.blob_loader
 import docker_registry_statistics.image_storage
+import docker_registry_statistics.revision_storage
 import docker_registry_statistics.tag_storage
 
 import docker_registry_statistics.commands.unused_blobs
-import docker_registry_statistics.commands.orphaned_images
+import docker_registry_statistics.commands.untagged_images
 import docker_registry_statistics.commands.statistics
 
 
@@ -21,7 +22,7 @@ import docker_registry_statistics.commands.statistics
 @click.pass_context
 def cli(ctx: Any, registry_path: pathlib.Path, verbose: bool) -> None:
 	'''
-	Application to calculate statistics and list orphaned images and blobs
+	Application to calculate statistics and list un-tagged images and blobs
 	from docker registry v2
 	'''
 	logging.basicConfig(
@@ -36,14 +37,15 @@ def cli(ctx: Any, registry_path: pathlib.Path, verbose: bool) -> None:
 		raise SystemExit(1)
 
 	ctx.obj['tag_storage'] = tag_storage = docker_registry_statistics.tag_storage.TagStorage(registry_path)
+	ctx.obj['revision_storage'] = revision_storage = docker_registry_statistics.revision_storage.RevisionStorage(registry_path)
 	ctx.obj['blob_loader'] = blob_loader = docker_registry_statistics.blob_loader.BlobLoader(registry_path)
-	ctx.obj['image_storage'] = docker_registry_statistics.image_storage.ImageStorage(tag_storage.existing_tags, blob_loader)
+	ctx.obj['image_storage'] = docker_registry_statistics.image_storage.ImageStorage(blob_loader)
 	
 
 
 for command in [
 	docker_registry_statistics.commands.statistics.statistics,
-	docker_registry_statistics.commands.orphaned_images.orphaned_images,
+	docker_registry_statistics.commands.untagged_images.untagged_images,
 	docker_registry_statistics.commands.unused_blobs.unused_blobs,
 ]:
 	cli.command()(

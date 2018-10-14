@@ -19,6 +19,7 @@ class RegistryObject:
 	hash_: str = attr.ib()
 
 
+
 @attr.s
 class Blob(RegistryObject):
 	path: pathlib.Path = attr.ib()
@@ -27,12 +28,20 @@ class Blob(RegistryObject):
 	data: Optional[Dict[str, Any]] = attr.ib()
 
 
+
 @attr.s
 class RegistryTag:
 	repository: str = attr.ib()
 	name: str = attr.ib()
 	images: str = attr.ib()
 	current_image: str = attr.ib()
+
+
+
+@attr.s
+class ImageRevision(RegistryObject):
+	repository: str = attr.ib()
+
 
 
 @attr.s

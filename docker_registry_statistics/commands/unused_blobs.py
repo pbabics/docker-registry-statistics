@@ -2,30 +2,38 @@ from typing import Dict, Any
 
 import logging
 
+import click
+
+import docker_registry_statistics.types
 
 
-def unused_blobs(ctx: Dict[str, Any]) -> None:
+
+@click.option('--only-manifests', is_flag = True, default = False, type = bool)
+def unused_blobs(ctx: Dict[str, Any], only_manifests: bool) -> None:
 	'''
 	Lists images which are no longer bound to any image 
 	'''
-	tag_storage = ctx.obj['tag_storage']
 	blob_loader = ctx.obj['blob_loader']
 	image_storage = ctx.obj['image_storage']
+	revision_storage = ctx.obj['revision_storage']
 
 	used_blobs = set()
-	for repository, tags in tag_storage.per_repository_tags.items():
-		for tag in tags:
-			for image_hash in tag.images:
-				logging.debug('Processing image %s@%s', repository, image_hash)
-				try:
-					image = image_storage.images[image_hash]
-				except KeyError:
-					pass
-				else:
-					used_blobs.add(image.hash_)
-					used_blobs.add(image.config_blob)
-					for layer in image.data_layers:
-						used_blobs.add(layer)
+	for revision in revision_storage.existing_revisions:
+		logging.debug('Processing image %s@%s', revision.repository, revision.hash_)
+		try:
+			image = image_storage.images[revision.hash_]
+		except KeyError:
+			pass
+		else:
+			used_blobs.add(image.hash_)
+			used_blobs.add(image.config_blob)
+			for layer in image.data_layers:
+				used_blobs.add(layer)
 
-	for blob_hash in blob_loader.available_blobs - used_blobs:
-		print(blob_hash)
+	if only_manifests:
+		for blob_hash in blob_loader.available_blobs - used_blobs:
+			if blob_loader.blobs[blob_hash].type_ is docker_registry_statistics.types.BlobTypes.IMAGE_MANIFEST:
+				print(blob_hash)
+	else:
+		for blob_hash in blob_loader.available_blobs - used_blobs:
+			print(blob_hash)
